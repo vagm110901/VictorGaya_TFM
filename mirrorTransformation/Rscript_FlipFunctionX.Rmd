@@ -1,0 +1,197 @@
+---
+title: "Rscript_FlipFunctionX"
+author: "Victor Gaya"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Load Required Packages
+```{r}
+#| label: packages
+# remotes::install_github("satijalab/seurat", ref = "v5.0.2")
+# packageVersion("Seurat")
+library(Seurat) # Load the Seurat package for single-cell RNA-seq analysis
+library(SeuratData) # Load additional datasets for Seurat
+library(SeuratObject) # Load Seurat object functions
+library(ggplot2) # Load ggplot2 for data visualization
+library(patchwork) # Load patchwork for combining plots
+library(dplyr) # Load dplyr for data manipulation
+
+library("htmltools") # Load htmltools for HTML output
+library("vembedr") # Load vembedr for embedding videos in RMarkdown
+
+library(BiocManager) # Load BiocManager for managing Bioconductor packages
+library(glmGamPoi) # Load glmGamPoi for Poisson regression analysis
+
+library(hdf5r) # Load hdf5r for HDF5 file reading/writing
+
+library(grid) # Load grid for grid graphics
+library(magick) # Load magick for image processing
+
+options(future.globals.maxSize = 8000 * 1024^2) # Set maximum size for future globals
+
+# Set working directory (uncomment and set to your path)
+#setwd("/Users/vagm_110901/Documents/Universitat/ConesaLab/Lab/02.Seurat/Yadav2023_adult_human_spinal_cord")
+```
+
+Define the Directories for Input and Output Files
+
+```{r}
+#| label: files1
+input_folder <- "/Users/vagm_110901/Documents/Universitat/ConesaLab/Lab/02.Seurat/Yadav2023_adult_human_spinal_cord/data/GSE222322_RAW" # Directory containing input data
+output_directory <- "/Users/vagm_110901/Documents/Universitat/ConesaLab/Lab/02.Seurat/Yadav2023_adult_human_spinal_cord/ImagesFlipFunction/" # Directory for saving output images
+```
+
+Create Lists for Files to Work With
+
+```{r}
+#| label: files2
+subdirectories <- list.dirs(path = input_folder, full.names = TRUE, recursive = FALSE) # List all subdirectories in the input folder
+
+files_per_folder <- lapply(subdirectories, function(subdir) list.files(path = subdir, full.names = TRUE)) # List all files in each subdirectory
+```
+
+Create Seurat Objects for Each Sample WITHOUT NORMALIZATION
+
+```{r}
+#| label: SeuratObjects1
+seurat_objects <- list() # Initialize list to store Seurat objects
+patient19_count <- 0 # Counter for patient 19
+patient43_count <- 0 # Counter for patient 43
+patient47_count <- 0 # Counter for patient 47
+patient45_count <- 0 # Counter for patient 45
+
+for (i in seq_along(subdirectories)) { # Loop through each subdirectory
+  slice_name <- tail(strsplit(subdirectories[[i]], "/")[[1]], 1) # Extract slice name from the subdirectory path
+  h5_file_name <- tail(strsplit(files_per_folder[[i]], "/")[[1]], 1) # Extract HDF5 file name from the file list
+  
+  seurat_elem <- Load10X_Spatial(data.dir = subdirectories[i], # Load spatial data
+                                   filename = h5_file_name, 
+                                   assay = "Spatial",
+                                   filter.matrix = TRUE, 
+                                   to.upper = FALSE)
+  
+  # Assign patient identifiers based on slice name
+  if (substr(slice_name, 26, 30) == "02636") { 
+    patient <- "patient19"
+    patient19_count <- patient19_count + 1
+    seurat_elem@meta.data$name <- paste0("slice19_", patient19_count) 
+  } else if (substr(slice_name, 26, 30) == "00022") { 
+    patient <- "patient43"
+    patient43_count <- patient43_count + 1
+    seurat_elem@meta.data$name <- paste0("slice43_", patient43_count) 
+  } else if (substr(slice_name, 26, 30) == "00023") { 
+    patient <- "patient47"
+    patient47_count <- patient47_count + 1
+    seurat_elem@meta.data$name <- paste0("slice47_", patient47_count) 
+  } else if (substr(slice_name, 26, 30) == "00025") { 
+    patient <- "patient45"
+    patient45_count <- patient45_count + 1
+    seurat_elem@meta.data$name <- paste0("slice45_", patient45_count) 
+  }
+  
+  sample_info <- sample(x = patient, size = ncol(x = seurat_elem), replace = TRUE) # Sample patient information for each cell
+  seurat_elem$info <- sample_info # Add patient information to the Seurat object
+  
+  # seurat_elem <- NormalizeData(seurat_elem, verbose = FALSE, assay = "Spatial") ### This is needed for later analysis, but unsure if it's the best time to execute it.
+  
+  seurat_elem[["percent.butterfly"]] <- PercentageFeatureSet(seurat_elem, features = c("SNAP25", "MAP2", "RBFOX3", "SYP")) # Calculate percentage of specified features
+  
+  # Sometimes there is a bug with image coordinates, stored as character instead of integer
+  seurat_elem@images$slice1@coordinates[] <- lapply(seurat_elem@images$slice1@coordinates, as.integer) # Convert coordinates to integer
+  
+  seurat_objects <- append(seurat_objects, seurat_elem) # Append the Seurat object to the list
+}
+```
+
+############################################################################### Sample 1 
+Let's select only sample 1 to work with it separately.
+
+```{r}
+#| label: sample1_create
+sample1 <- seurat_objects[[1]] # Select the first Seurat object from the list
+```
+
+############################################################################### Invert X Axis (x, y) -> (-x, y)
+
+```{r}
+#| label: function_inversionX
+source("/Users/vagm_110901/Documents/Universitat/ConesaLab/Lab/02.Seurat/FlipFunction.R") # Source the function for inverting the X axis
+```
+
+```{r}
+#| label: sample1_2_inversionX
+
+plot1 <- SpatialDimPlot(sample1, alpha = 0) & theme(legend.position = "none") & ggtitle("Sample 1") # Create spatial plot for original sample
+
+sample2 <- inversionEjeX(sample1) # Invert the X axis of sample1
+plot2 <- SpatialDimPlot(sample2, alpha = 0) & theme(legend.position = "none") & ggtitle("Inverted Sample") # Create spatial plot for inverted sample
+
+sample3 <- inversionEjeX(sample2) # Invert the X axis of sample2 back to recover original orientation
+plot3 <- SpatialDimPlot(sample3, alpha = 0) & theme(legend.position = "none") & ggtitle("Recovered Inverted Sample") # Create spatial plot for recovered sample
+
+plot1 + plot2 + plot3 # Combine the plots
+
+jpeg(filename = paste0(output_directory, "pacientes_spatial_pngX.jpg"), height = 700, width = 1200, quality = 50) # Save the combined plot as a JPEG image
+print(plot1 + plot2 + plot3) # Print the combined plot
+dev.off() # Close the JPEG device
+
+patients_list <- list(sample1, sample2, sample3) # Create a list of samples for further analysis
+```
+
+```{r}
+#| label: sample1_plot
+for (i in 1:length(patients_list)) { # Loop through each sample in the patients list
+  violin_plot <- VlnPlot(
+    patients_list[[i]], features = c("nFeature_Spatial", "nCount_Spatial", "percent.butterfly"), 
+    pt.size = 0.1, ncol = 3) & 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          axis.ticks.x = element_blank()) # Create violin plots for specified features
+  print(violin_plot) # Print the violin plot
+}
+
+```
+############################################################################### Merge Only
+
+```{r}
+#| label: patients_Merge
+ids <- c() # Initialize a vector to store cell IDs
+for (i in seq_along(patients_list)) { 
+  ids <- c(ids, paste0("slice19_", i)) # Generate unique IDs for each slice in the patients list
+}
+
+merged_patients <- merge(x = patients_list[[1]], # Merge the first sample with the rest
+                          y = patients_list[2:length(patients_list)], 
+                          add.cell.ids = ids, 
+                          project = "VisiumPatient19") # Specify project name
+
+names(merged_patients@images)[1] <- "slice1.1" # Rename the first image in the merged object
+```
+
+```{r}
+#| label: patients_save
+saveRDS(merged_patients, # Save the merged Seurat object as an RDS file
+        file = paste0(output_directory, "/Pacientes_mergeX.rds"))
+merged_patients <- readRDS(file = paste0(output_directory, "/Pacientes_mergeX.rds"))
+```
+
+```{r}
+#| label: patients_visualize
+# Visualize the Merged Sample with SpatialDimPlot
+SpatialDimPlot(merged_patients, alpha = 0.5, crop = FALSE, ncol = 3) # Generate spatial dimension plot for the merged Seurat object
+
+############################################################################### 
+
+# Visualize the "percent.butterfly" Feature with SpatialPlot
+SpatialPlot(object = merged_patients, 
+            features = "percent.butterfly", alpha = 1, crop = FALSE, ncol = 3) & 
+  theme(legend.position = "none") # Generate spatial plot for the "percent.butterfly" feature
+
+# Save the Plot as a JPEG Image
+jpeg(filename = paste0(saveDir, "pacientes_spatial_pngX_spots.jpg"), height = 700, width = 1200, quality = 50)
+SpatialPlot(object = merged_patients, 
+            features = "percent.butterfly", alpha = 1, crop = FALSE, ncol = 3) & 
+  theme(legend.position = "none") # Plot "percent.butterfly" feature again for saving
+dev.off() # Close the JPEG device
+```
