@@ -1,5 +1,4 @@
-# VictorGayaTFM
-TFM Title: Development of image alignment methods for Spatial Transcriptomics data of Spinal Cord
+# Development of image alignment methods for Spatial Transcriptomics data of Spinal Cord
 
 Student: Víctor Álvaro Gaya Martín
 
