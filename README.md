@@ -7,4 +7,5 @@ This repository contains the scripts used for the Masther's Thesis titled _"Deve
   * Inside the _alignmentMethods_ directory are the directories for each different approach.
     * Inside the _Geometric_ directory are 
     * Inside the _Procrustes_ directory are 
-    * Inside the _imageJ_ directory are 
+    * Inside the _imageJ_ directory are
+    * Inside the _evaluation_ directory are
