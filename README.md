@@ -9,3 +9,9 @@ This repository contains the scripts used for the Masther's Thesis titled _"Deve
     * Inside the _Procrustes_ directory are the scripts which use **IMIFA::Procrustes function** for the alignment.
     * Inside the _imageJ_ directory are the scripts which use the **ImageJ plugin Register Virtual Stack Slices** for the alignment.
     * Inside the _evaluation_ directory are the scripts for the statitical (_evalAlign_) and biological (_deconvolution_) evaluation of the alignment.
+   
+The scripts which starts with _function__ are used as a source of function for other scripts.
+The rest of the scripts are used as the main program. 
+
+
+30/10/2024 Víctor A. Gaya
