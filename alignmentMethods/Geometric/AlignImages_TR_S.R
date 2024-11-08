@@ -513,18 +513,18 @@ for (i in 2:4) {
 # Create a data frame to hold the values from the same region and same point
 data_sameRegion_samePoint <- data.frame(
   Image = c("Image2", "Image3", "Image4"),
-  #MSE_controlPos = MSE_controlPos,
-  #MSE_controlNeg = MSE_controlNeg,
+  MSE_controlPos = MSE_controlPos,
+  MSE_controlNeg = MSE_controlNeg,
   MSE_controlMov = MSE_controlMov,
   MSE_original = MSE_original,
   MSE_transformado = MSE_transformado,
-  #MSE_gray_controlPos = MSE_gray_controlPos,
-  #MSE_gray_controlNeg = MSE_gray_controlNeg,
+  MSE_gray_controlPos = MSE_gray_controlPos,
+  MSE_gray_controlNeg = MSE_gray_controlNeg,
   MSE_gray_controlMov = MSE_gray_controlMov,
   MSE_gray_original = MSE_gray_original,
   MSE_gray_transformado = MSE_gray_transformado,
-  #SSIM_controlPos = SSIM_controlPos,
-  #SSIM_controlNeg = SSIM_controlNeg,
+  SSIM_controlPos = SSIM_controlPos,
+  SSIM_controlNeg = SSIM_controlNeg,
   SSIM_controlMov = SSIM_controlMov,
   SSIM_original = SSIM_original,
   SSIM_transformado = SSIM_transformado,
@@ -539,44 +539,76 @@ data_sameRegion_samePoint
 library(ggplot2)
 # Create a scatter plot for the differnet parameters
 pMSE <- ggplot(data_sameRegion_samePoint, aes(x = Image)) +
-  geom_point(aes(y = MSE_controlPos, color = "MSE Positive Control"), size = 3) +
-  #  geom_point(aes(y = MSE_controlNeg, color = "MSE Negative Control"), size = 3) +
-  geom_point(aes(y = MSE_controlMov, color = "MSE Movement Control"), size = 3) +
-  geom_point(aes(y = MSE_original, color = "MSE original"), size = 3) +
-  geom_point(aes(y = MSE_transformado, color = "MSE transformed"), size = 3) +
-  #  scale_y_log10() + 
-  labs(x = "image", y = "MSE value") +
-  scale_color_manual(values = c("MSE Positive Control" = "orange","MSE Negative Control" = "red", "MSE Movement Control" = "blue", "MSE original" = "green", "MSE transformed" = "purple")) +
-  theme_minimal()
+  geom_point(aes(y = MSE_controlPos, color = "MSE Positive Control"), size = 5) +
+  #  geom_point(aes(y = MSE_controlNeg, color = "MSE Negative Control"), size = 5) +
+  geom_point(aes(y = MSE_controlMov, color = "MSE Movement Control"), size = 5) +
+  geom_point(aes(y = MSE_original, color = "MSE original"), size = 5) +
+  geom_point(aes(y = MSE_transformado, color = "MSE transformed"), size = 5) +
+  labs(x = "", y = "MSE value") +
+  scale_color_manual(name = "", values = c("MSE Positive Control" = "orange","MSE Negative Control" = "red", "MSE Movement Control" = "blue", "MSE original" = "green", "MSE transformed" = "purple")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "bottom"
+  ) +
+  guides(color = guide_legend(nrow = 2))
 
 pMSEgray <- ggplot(data_sameRegion_samePoint, aes(x = Image)) +
-  geom_point(aes(y = MSE_gray_controlPos, color = "MSE gray Positive Control"), size = 3) +
-  #  geom_point(aes(y = MSE_gray_controlNeg, color = "MSE gray Negative Control"), size = 3) +
-  geom_point(aes(y = MSE_gray_controlMov, color = "MSE gray Movement Control"), size = 3) +
-  geom_point(aes(y = MSE_gray_original, color = "MSE gray Original"), size = 3) +
-  geom_point(aes(y = MSE_gray_transformado, color = "MSE gray Transformed"), size = 3) +
-  #  scale_y_log10() + 
-  labs(x = "image", y = "MSE gray value") +
-  scale_color_manual(values = c("MSE gray Positive Control" = "orange", "MSE gray Negative Control" = "red", "MSE gray Movement Control" = "blue", "MSE gray Original" = "green", "MSE gray Transformed" = "purple")) +
-  theme_minimal()
+  geom_point(aes(y = MSE_gray_controlPos, color = "MSE gray Positive Control"), size = 5) +
+  #  geom_point(aes(y = MSE_gray_controlNeg, color = "MSE gray Negative Control"), size = 5) +
+  geom_point(aes(y = MSE_gray_controlMov, color = "MSE gray Movement Control"), size = 5) +
+  geom_point(aes(y = MSE_gray_original, color = "MSE gray Original"), size = 5) +
+  geom_point(aes(y = MSE_gray_transformado, color = "MSE gray Transformed"), size = 5) +
+  labs(x = "", y = "MSE gray value") +
+  scale_color_manual(name = "", values = c("MSE gray Positive Control" = "orange", "MSE gray Negative Control" = "red", "MSE gray Movement Control" = "blue", "MSE gray Original" = "green", "MSE gray Transformed" = "purple")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "bottom"
+  ) +
+  guides(color = guide_legend(nrow = 2))
 
 pSSIM <- ggplot(data_sameRegion_samePoint, aes(x = Image)) +
-  geom_point(aes(y = SSIM_controlPos, color = "SSIM Positive Control"), size = 3) +
-  geom_point(aes(y = SSIM_controlNeg, color = "SSIM Negative Control"), size = 3) +
-  geom_point(aes(y = SSIM_controlMov, color = "SSIM Movement Control"), size = 3) +
-  geom_point(aes(y = SSIM_original, color = "SSIM Original"), size = 3) +
-  geom_point(aes(y = SSIM_transformado, color = "SSIM Transformed"), size = 3) +
-  #  scale_y_log10() + 
-  labs(x = "image", y = "SSIM value") +
-  scale_color_manual(values = c("SSIM Positive Control" = "orange", "SSIM Negative Control" = "red", "SSIM Movement Control" = "blue", "SSIM Original" = "green", "SSIM Transformed" = "purple")) +
-  theme_minimal()
+  geom_point(aes(y = SSIM_controlPos, color = "SSIM Positive Control"), size = 5) +
+  geom_point(aes(y = SSIM_controlNeg, color = "SSIM Negative Control"), size = 5) +
+  geom_point(aes(y = SSIM_controlMov, color = "SSIM Movement Control"), size = 5) +
+  geom_point(aes(y = SSIM_original, color = "SSIM Original"), size = 5) +
+  geom_point(aes(y = SSIM_transformado, color = "SSIM Transformed"), size = 5) +
+  labs(x = "", y = "SSIM value") +
+  scale_color_manual(name = "", values = c("SSIM Positive Control" = "orange", "SSIM Negative Control" = "red", "SSIM Movement Control" = "blue", "SSIM Original" = "green", "SSIM Transformed" = "purple")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "bottom"
+  ) +
+  guides(color = guide_legend(nrow = 2))
 
 pEucl <- ggplot(data_sameRegion_samePoint, aes(x = Image)) +
-  geom_point(aes(y = Eucl_original, color = "Euclidean Original"), size = 3) +
-  geom_point(aes(y = Eucl_transformado, color = "Euclidean Transformed"), size = 3) +
-  labs(x = "image", y = "Euclidean value") +
-  scale_color_manual(values = c("Euclidean Original" = "green", "Euclidean Transformed" = "purple")) +
-  theme_minimal()
+  geom_point(aes(y = Eucl_original, color = "Euclidean Original"), size = 5) +
+  geom_point(aes(y = Eucl_transformado, color = "Euclidean Transformed"), size = 5) +
+  labs(x = "", y = "Euclidean value") +
+  scale_color_manual(name = "", values = c("Euclidean Original" = "green", "Euclidean Transformed" = "purple")) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(size = 18),
+        axis.text.y = element_text(size = 18),
+        axis.title.y = element_text(size = 20),
+        axis.title.x = element_text(size = 20),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 12),
+        legend.position = "bottom"
+  )
 
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_evalMSE.png"), plot = pMSE)
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_evalMSEgray.png"), plot = pMSEgray)
@@ -622,14 +654,15 @@ stats_long <- stats_df %>%
 
 # Create bar plots for evaluations
 peval1 <- ggplot(stats_df[2:3,], aes(x = Parameter, y = Mean)) +
-  geom_bar(stat = "identity", fill = "skyblue", width = 0.4) +  # Barras de la media
+  geom_bar(stat = "identity", fill = c("green","purple"), width = 0.4) +  # Barras de la media
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), width = 0.2) +  # Barras de error
-  labs(y = "Mean value") +
+  labs(y = "Mean value", x = "", title = "MSE") +
+  scale_x_discrete(labels = c("Original", "Transformed")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 24),
+  theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),,
+        axis.text.x = element_text(size = 24),
         axis.text.y = element_text(size = 24),
-        axis.title.x = element_text(size = 30),  # Tamaño del título del eje x
-        axis.title.y = element_text(size = 30)  # Tamaño del título del eje y
+        axis.title.y = element_text(size = 28)  # Tamaño del título del eje y
   ) +
   annotate("text", x = 2, y = stats_df[3,]$Mean + 150,
            label = round(mse_p_value, 4), size = 8)
@@ -637,14 +670,15 @@ peval1 <- ggplot(stats_df[2:3,], aes(x = Parameter, y = Mean)) +
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_eval1.png"), plot = peval1)
 
 peval2 <- ggplot(stats_df[5:6,], aes(x = Parameter, y = Mean)) +
-  geom_bar(stat = "identity", fill = "skyblue", width = 0.4) +  # Barras de la media
+  geom_bar(stat = "identity", fill = c("green","purple"), width = 0.4) +  # Barras de la media
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), width = 0.2) +  # Barras de error
-  labs(y = "Mean value") +
+  labs(y = "Mean value", x = "", title = "MSE gray") +
+  scale_x_discrete(labels = c("Original", "Transformed")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 24),
+  theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),,
+        axis.text.x = element_text(size = 24),
         axis.text.y = element_text(size = 24),
-        axis.title.x = element_text(size = 30),  # Tamaño del título del eje x
-        axis.title.y = element_text(size = 30)  # Tamaño del título del eje y
+        axis.title.y = element_text(size = 28)  # Tamaño del título del eje y
   ) +
   annotate("text", x = 2, y = stats_df[6,]$Mean + 150,
            label = round(mse_gray_p_value, 4), size = 8)
@@ -652,14 +686,15 @@ peval2 <- ggplot(stats_df[5:6,], aes(x = Parameter, y = Mean)) +
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_eval2.png"), plot = peval2)
 
 peval3 <- ggplot(stats_df[8:9,], aes(x = Parameter, y = Mean)) +
-  geom_bar(stat = "identity", fill = "skyblue", width = 0.4) +  # Barras de la media
+  geom_bar(stat = "identity", fill = c("green","purple"), width = 0.4) +  # Barras de la media
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), width = 0.2) +  # Barras de error
-  labs(y = "Mean value") +
+  labs(y = "Mean value", x = "", title = "SSIM") +
+  scale_x_discrete(labels = c("Original", "Transformed")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 24),
+  theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),,
+        axis.text.x = element_text(size = 24),
         axis.text.y = element_text(size = 24),
-        axis.title.x = element_text(size = 30),  # Tamaño del título del eje x
-        axis.title.y = element_text(size = 30)  # Tamaño del título del eje y
+        axis.title.y = element_text(size = 28)  # Tamaño del título del eje y
   ) +
   annotate("text", x = 2, y = stats_df[9,]$Mean + 0.05,
            label = round(ssim_p_value, 4), size = 8)
@@ -667,30 +702,17 @@ peval3 <- ggplot(stats_df[8:9,], aes(x = Parameter, y = Mean)) +
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_eval3.png"), plot = peval3)
 
 peval4 <- ggplot(stats_df[10:11,], aes(x = Parameter, y = Mean)) +
-  geom_bar(stat = "identity", fill = "skyblue", width = 0.4) +  # Barras de la media
+  geom_bar(stat = "identity", fill = c("green","purple"), width = 0.4) +  # Barras de la media
   geom_errorbar(aes(ymin = Mean - SD, ymax = Mean + SD), width = 0.2) +  # Barras de error
-  labs(y = "Mean value") +
+  labs(y = "Mean value", x = "", title = "Euclidean distance") +
+  scale_x_discrete(labels = c("Original", "Transformed")) +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 24),
+  theme(plot.title = element_text(size = 28, face = "bold", hjust = 0.5),,
+        axis.text.x = element_text(size = 24),
         axis.text.y = element_text(size = 24),
-        axis.title.x = element_text(size = 30),  # Tamaño del título del eje x
-        axis.title.y = element_text(size = 30)  # Tamaño del título del eje y
+        axis.title.y = element_text(size = 28)  # Tamaño del título del eje y
   ) +
   annotate("text", x = 2, y = stats_df[11,]$Mean + 150,
            label = round(eucl_p_value, 4), size = 8)
 
 ggsave(paste0(saveDir, "/results/patient19_merge_alignTR_S_eval4.png"), plot = peval4)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
