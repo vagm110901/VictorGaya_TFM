@@ -14,4 +14,4 @@ The scripts which starts with _function__ are used as a source of function for o
 The rest of the scripts are used as the main program. 
 
 
-30/10/2024 Víctor A. Gaya
+08/11/2024 Víctor A. Gaya
